@@ -13,5 +13,5 @@ body {
 }
 
 #myCanvas {
-  border: 1px solid red;
+  box-shadow: 0 0 20px 10px #333;
 }
