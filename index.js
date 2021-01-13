@@ -1,20 +1,12 @@
-const canvas = document.getElementById("myCanvas");
-const brush = canvas.getContext("2d");
+let canvas = document.getElementById("myCanvas");
+let brush = canvas.getContext("2d");
+
 let turn = false;
-let board = [true, true, true];
-const boxPos = [{ id: 1, sx: 0, sy: 0, ex: 166, ey: 166, active: false },
-{ id: 2, sx: 166, sy: 0, ex: 332, ey: 166, active: false },
-{ id: 3, sx: 332, sy: 0, ex: 500, ey: 166, active: false },
-{ id: 4, sx: 0, sy: 166, ex: 166, ey: 332, active: false },
-{ id: 5, sx: 166, sy: 166, ex: 332, ey: 332, active: false },
-{ id: 6, sx: 332, sy: 166, ex: 500, ey: 332, active: false },
-{ id: 7, sx: 0, sy: 332, ex: 166, ey: 500, active: false },
-{ id: 8, sx: 166, sy: 332, ex: 332, ey: 500, active: false },
-{ id: 9, sx: 332, sy: 332, ex: 500, ey: 500, active: false }
-]
+let boxPos;
 
+let playerX;
+let playerO;
 
-start();
 
 // Event that catches the click to select the box
 canvas.addEventListener("click", (ev) => {
@@ -23,8 +15,21 @@ canvas.addEventListener("click", (ev) => {
 });
 
 function start() {
-  board.length = 9;
-  board.fill(false);
+  boxPos = [{ id: 1, sx: 0, sy: 0, ex: 166, ey: 166, active: false, type: 2 },
+  { id: 2, sx: 166, sy: 0, ex: 332, ey: 166, active: false, type: 2 },
+  { id: 3, sx: 332, sy: 0, ex: 500, ey: 166, active: false, type: 2 },
+  { id: 4, sx: 0, sy: 166, ex: 166, ey: 332, active: false, type: 2 },
+  { id: 5, sx: 166, sy: 166, ex: 332, ey: 332, active: false, type: 2 },
+  { id: 6, sx: 332, sy: 166, ex: 500, ey: 332, active: false, type: 2 },
+  { id: 7, sx: 0, sy: 332, ex: 166, ey: 500, active: false, type: 2 },
+  { id: 8, sx: 166, sy: 332, ex: 332, ey: 500, active: false, type: 2 },
+  { id: 9, sx: 332, sy: 332, ex: 500, ey: 500, active: false, type: 2 }
+  ];
+  turn = false;
+
+  playerX = document.querySelector("#p1").value;
+  playerO = document.querySelector("#p2").value;
+  console.log(playerX);
 
   const pointStart = 166;
   brush.beginPath();
@@ -48,6 +53,17 @@ function start() {
   brush.stroke();
 }
 
+function restart() {
+  const modal = document.querySelector(".modal");
+  canvas = document.getElementById("myCanvas");
+  brush = canvas.getContext("2d");
+
+  brush.clearRect(0, 0, canvas.width, canvas.height);
+  modal.remove();
+  start();
+  console.log(boxPos);
+}
+
 function createCircle(x, y) {
   brush.beginPath();
   brush.lineWidth = 7;
@@ -69,7 +85,6 @@ function createX(x, y) {
   brush.stroke();
 }
 
-
 function getMousePos(event) {
   const rect = canvas.getBoundingClientRect();
   return {
@@ -77,8 +92,6 @@ function getMousePos(event) {
     y: event.clientY - rect.top
   }
 }
-
-
 
 function boxActive(mousePos) {
   const { x, y } = mousePos;
@@ -88,6 +101,7 @@ function boxActive(mousePos) {
   for (const box of boxPos) {
     if (box.sx < x && box.ex > x && box.sy < y && box.ey > y && !box.active) {
       box.active = true;
+      box.type = turn ? 1 : 0;
       invoke = true;
       switch (box.id) {
         case 1:
@@ -127,7 +141,6 @@ function boxActive(mousePos) {
           invokePos.x = 416;
           break;
       }
-      console.log(boxPos)
       break;
     }
   }
@@ -139,7 +152,7 @@ function boxActive(mousePos) {
       if (!box.active) {
         break;
       }
-      if(box.id === 9) {
+      if (box.id === 9) {
         tie();
       }
     }
@@ -149,28 +162,57 @@ function boxActive(mousePos) {
 
 }
 
-function win(player) {
+function win(turn) {
   // true == x false = circle
+  const player = turn ? "x" : "circle";
+  let result = false;
+
 
   for (let i = 0; i < boxPos.length; i += 3) {
     if (boxPos[i].active && boxPos[i + 1].active && boxPos[i + 2].active) {
-      console.log(1);
+      if (boxPos[i].type === boxPos[i + 1].type && boxPos[i].type === boxPos[i + 2].type) {
+        result = true;
+      }
     }
   }
 
   for (let i = 0; i < 3; i++) {
     if (boxPos[i].active && boxPos[i + 3].active && boxPos[i + 6].active) {
-      console.log(2);
+      if (boxPos[i].type === boxPos[i + 3].type && boxPos[i].type === boxPos[i + 6].type) {
+        result = true;
+      }
     }
   }
 
   for (let i = 0; i < 3; i += 2) {
     if (boxPos[0 + i].active && boxPos[4].active && boxPos[8 - i].active) {
-      console.log(3);
+      if (boxPos[0 + i].type === boxPos[4].type && boxPos[0 + i].type === boxPos[8 - i].type) {
+        result = true;
+      }
     }
+  }
+
+  if (result) {
+    createModal(true);
   }
 }
 
 function tie() {
-  console.log("Empate")
+  createModal(false);
+}
+
+function createModal(result) {
+
+  //if result is true then it's win
+  const container = document.querySelector(".container");
+  const titleWin = "Felicidades por ganar!!!";
+  const titleTie = "Fue un gran empate";
+  const modal = `
+  <div class="modal">
+  <div><span class="modal__text">${result ? titleWin : titleTie}</span></div>
+  <div><button onclick="restart()" class="modal__button">Reiniciar</button></div>
+  </div>
+  `;
+
+  container.innerHTML += modal;
 }

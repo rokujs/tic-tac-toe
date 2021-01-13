@@ -4,7 +4,11 @@
   box-sizing: border-box;
 }
 
-body {
+html {
+  font-size: 62.5%;
+}
+
+.container {
   width: 100%;
   height: 100vh;
   display: flex;
@@ -14,4 +18,39 @@ body {
 
 #myCanvas {
   box-shadow: 0 0 20px 10px #333;
+}
+
+.modal {
+  background-color: rgb(72, 131, 255);
+  border:  10px solid rgb(48, 97, 231);
+  width: 600px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  border-radius: 25px;
+  position: absolute;
+}
+
+.modal__text {
+  font-size: 4rem;
+  color: #eee;
+}
+
+.modal__button {
+  background-color: rebeccapurple;
+  border-radius: 20px;
+  padding: 20px 50px;
+  border:none;
+  font-size: 2rem;
+  color: #eee;
+}
+
+.modal__button:hover{
+  padding: 25px 55px;
+}
+
+.modal__button:focus{
+  outline: none;
 }
