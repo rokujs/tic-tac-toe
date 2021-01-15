@@ -7,12 +7,20 @@ let boxPos;
 let playerX;
 let playerO;
 
+let xPoints = 0;
+let oPoints = 0;
+
 
 // Event that catches the click to select the box
-canvas.addEventListener("click", (ev) => {
-  const mousePos = getMousePos(ev);
-  boxActive(mousePos);
-});
+
+
+function startMenu() {
+  playerX = document.querySelector("#p1").value;
+  playerO = document.querySelector("#p2").value;
+
+  createHeader(playerX, playerO);
+  restart();
+}
 
 function start() {
   boxPos = [{ id: 1, sx: 0, sy: 0, ex: 166, ey: 166, active: false, type: 2 },
@@ -27,8 +35,6 @@ function start() {
   ];
   turn = false;
 
-  playerX = document.querySelector("#p1").value;
-  playerO = document.querySelector("#p2").value;
   console.log(playerX);
 
   const pointStart = 166;
@@ -58,10 +64,14 @@ function restart() {
   canvas = document.getElementById("myCanvas");
   brush = canvas.getContext("2d");
 
+  canvas.addEventListener("click", (ev) => {
+    const mousePos = getMousePos(ev);
+    boxActive(mousePos);
+  });
+
   brush.clearRect(0, 0, canvas.width, canvas.height);
   modal.remove();
   start();
-  console.log(boxPos);
 }
 
 function createCircle(x, y) {
@@ -83,6 +93,44 @@ function createX(x, y) {
   brush.moveTo(x - lineLength, y + lineLength);
   brush.lineTo(x + lineLength, y - lineLength);
   brush.stroke();
+}
+
+function createHeader(p1, p2) {
+  const header = document.querySelector(".header");
+  const playerStatus = `
+  <div class="header_item" id="p2">
+  <strong class="header_item-icon">⭕</strong><span>${p2}</span>
+  </div>
+  <div class="header_item" id="p1">
+  <strong class="header_item-icon">✖️</strong><span>${p1}</span>
+  </div>`
+  header.innerHTML += playerStatus;
+}
+
+function createModal(result, winner) {
+
+  //if result is true then it's win
+  const container = document.querySelector(".container");
+  const pl1 = document.querySelector("#p1");
+  const pl2 = document.querySelector("#p2");
+  const titleWin = `Congratulations ${winner}, it was a great victory`;
+  const titleTie = "It was a great tied";
+  const modal = `
+  <div class="modal">
+  <div><p class="modal__text">${result ? titleWin : titleTie}</p></div>
+  <div><button onclick="restart()" class="modal__button">Restart</button></div>
+  </div>
+  `;
+
+  if (result) {
+    console.log(pl1);
+    turn ?
+    pl1.innerHTML = `<strong class="header_item-icon">✖️</strong><span>${playerX}</span><div class="header_item-point">${xPoints}</div>`
+    :
+    pl2.innerHTML = `<strong class="header_item-icon">⭕</strong><span>${playerO}</span><div class="header_item-point">${oPoints}</div>`
+  }
+
+  container.innerHTML += modal;
 }
 
 function getMousePos(event) {
@@ -164,7 +212,7 @@ function boxActive(mousePos) {
 
 function win(turn) {
   // true == x false = circle
-  const player = turn ? "x" : "circle";
+  const player = turn ? playerX : playerO;
   let result = false;
 
 
@@ -193,26 +241,13 @@ function win(turn) {
   }
 
   if (result) {
-    createModal(true);
+    turn ? xPoints++ : oPoints++;
+    createModal(true, player);
   }
 }
 
 function tie() {
-  createModal(false);
+  createModal(false, "");
 }
 
-function createModal(result) {
 
-  //if result is true then it's win
-  const container = document.querySelector(".container");
-  const titleWin = "Felicidades por ganar!!!";
-  const titleTie = "Fue un gran empate";
-  const modal = `
-  <div class="modal">
-  <div><span class="modal__text">${result ? titleWin : titleTie}</span></div>
-  <div><button onclick="restart()" class="modal__button">Reiniciar</button></div>
-  </div>
-  `;
-
-  container.innerHTML += modal;
-}
