@@ -64,6 +64,11 @@ body {
   animation-direction: alternate;
 }
 
+#canvasBg {
+  position: absolute;
+  z-index: -1;
+}
+
 @keyframes canvas {
   0% {
     --border_canvas: rgba(238, 238, 238, 0.4);

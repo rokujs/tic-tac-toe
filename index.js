@@ -34,8 +34,6 @@ function start() {
   ];
   turn = false;
 
-  console.log(playerX);
-
   const pointStart = 166;
   brush.beginPath();
   brush.lineWidth = 7;
@@ -56,6 +54,8 @@ function start() {
   brush.moveTo(10, pointStart * 2);
   brush.lineTo(490, pointStart * 2);
   brush.stroke();
+
+  pointTurn();
 }
 
 function restart() {
@@ -120,13 +120,38 @@ function createModal(result, winner) {
   `;
 
   if (result) {
-    console.log(pl1);
     turn
       ? (pl1.innerHTML = `<strong class="header_item-icon">✖️</strong><span>${playerX}</span><div class="header_item-point">${xPoints}</div>`)
       : (pl2.innerHTML = `<strong class="header_item-icon">⭕</strong><span>${playerO}</span><div class="header_item-point">${oPoints}</div>`);
   }
 
   container.innerHTML += modal;
+}
+
+function pointTurn() {
+  const canvasBg = document.getElementById("canvasBg");
+  const brushBg = canvasBg.getContext("2d");
+
+  const lineLength = 220;
+  const x = 250;
+  const y = 250;
+
+  brushBg.clearRect(0, 0, canvasBg.width, canvas.height);
+
+  brushBg.lineWidth = 20;
+  brushBg.strokeStyle = "#00000066";
+  brushBg.lineCap = "round";
+  brushBg.beginPath();
+
+  if (turn) {
+    brushBg.moveTo(x - lineLength, y - lineLength);
+    brushBg.lineTo(x + lineLength, y + lineLength);
+    brushBg.moveTo(x - lineLength, y + lineLength);
+    brushBg.lineTo(x + lineLength, y - lineLength);
+  } else {
+    brushBg.arc(x, y, lineLength, 0, Math.PI * 2, true);
+  }
+  brushBg.stroke();
 }
 
 function getMousePos(event) {
@@ -205,6 +230,8 @@ function boxActive(mousePos) {
     win(turn);
     turn = !turn;
   }
+
+  pointTurn();
 }
 
 function win(turn) {
@@ -254,40 +281,3 @@ function win(turn) {
 function tie() {
   createModal(false, "");
 }
-
-// CSS
-
-window.CSS.registerProperty({
-  name: "--first",
-  syntax: "<color>",
-  inherits: true,
-  initialValue: "#0F2027",
-});
-
-window.CSS.registerProperty({
-  name: "--second",
-  syntax: "<color>",
-  inherits: true,
-  initialValue: "#203A43",
-});
-
-window.CSS.registerProperty({
-  name: "--third",
-  syntax: "<color>",
-  inherits: true,
-  initialValue: "#2C5364",
-});
-
-window.CSS.registerProperty({
-  name: "--border_canvas",
-  syntax: "<color>",
-  inherits: true,
-  initialValue: "rgba(238, 238, 238, 0.4)",
-});
-
-window.CSS.registerProperty({
-  name: "--base_canvas",
-  syntax: "<color>",
-  inherits: true,
-  initialValue: "rgba(255, 255, 255, 0.2)",
-});
