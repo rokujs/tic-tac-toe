@@ -74,23 +74,70 @@ function restart() {
 }
 
 function createCircle(x, y) {
-  brush.beginPath();
-  brush.lineWidth = 7;
-  brush.strokeStyle = "#eee";
-  brush.arc(x, y, 50, 0, Math.PI * 2, true);
-  brush.stroke();
+  let arcLength = 0;
+  // brush.beginPath();
+  // brush.lineWidth = 7;
+  // brush.strokeStyle = "#eee";
+  // brush.arc(x, y, 50, 0, Math.PI * 2, true);
+  // brush.stroke();
+
+  do {
+    const arc = arcLength;
+    setTimeout(() => {
+      brush.beginPath();
+      brush.strokeStyle = "#eee";
+      brush.lineWidth = arc + 2;
+      brush.arc(x, y, 50, arc, arc + 0.1, false);
+      brush.stroke();
+    }, arcLength * 100);
+    arcLength = arcLength + 0.1;
+  } while (arcLength < 6);
 }
 
 function createX(x, y) {
   const lineLength = 40;
-  brush.beginPath();
-  brush.lineWidth = 7;
-  brush.strokeStyle = "#333";
-  brush.moveTo(x - lineLength, y - lineLength);
-  brush.lineTo(x + lineLength, y + lineLength);
-  brush.moveTo(x - lineLength, y + lineLength);
-  brush.lineTo(x + lineLength, y - lineLength);
-  brush.stroke();
+  const timeCreateLine = 0.5;
+
+  const startX = x - lineLength;
+  const startY = y - lineLength;
+  const endX = x + lineLength;
+  const endY = y + lineLength;
+
+  let line = 0;
+  do {
+    const x = startX + line;
+    const y = startY + line;
+    const widthLine = (line + 6) / 6;
+
+    setTimeout(() => {
+      brush.strokeStyle = "#333";
+      brush.beginPath();
+      brush.lineWidth = widthLine;
+      brush.moveTo(x, y);
+      brush.lineTo(x + 1, y + 1);
+      brush.stroke();
+    }, line * timeCreateLine);
+
+    line++;
+  } while (endY > startY + line + 1);
+
+  line = 0;
+  do {
+    const x = startX + line;
+    const y = endY - line;
+    const widthLine = (line + 5) / 5;
+
+    setTimeout(() => {
+      brush.strokeStyle = "#333";
+      brush.beginPath();
+      brush.lineWidth = widthLine;
+      brush.moveTo(x, y);
+      brush.lineTo(x + 1, y + 1);
+      brush.stroke();
+    }, line * timeCreateLine);
+
+    line++;
+  } while (endX > startX + line + 1);
 }
 
 function createHeader(p1, p2) {
@@ -139,7 +186,7 @@ function pointTurn() {
   brushBg.clearRect(0, 0, canvasBg.width, canvas.height);
 
   brushBg.lineWidth = 20;
-  brushBg.strokeStyle = "#00000066";
+  brushBg.strokeStyle = "#5F45ED66";
   brushBg.lineCap = "round";
   brushBg.beginPath();
 
