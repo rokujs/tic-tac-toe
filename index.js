@@ -22,15 +22,96 @@ function startMenu() {
 
 function start() {
   boxPos = [
-    { id: 1, sx: 0, sy: 0, ex: 166, ey: 166, active: false, type: 2 },
-    { id: 2, sx: 166, sy: 0, ex: 332, ey: 166, active: false, type: 2 },
-    { id: 3, sx: 332, sy: 0, ex: 500, ey: 166, active: false, type: 2 },
-    { id: 4, sx: 0, sy: 166, ex: 166, ey: 332, active: false, type: 2 },
-    { id: 5, sx: 166, sy: 166, ex: 332, ey: 332, active: false, type: 2 },
-    { id: 6, sx: 332, sy: 166, ex: 500, ey: 332, active: false, type: 2 },
-    { id: 7, sx: 0, sy: 332, ex: 166, ey: 500, active: false, type: 2 },
-    { id: 8, sx: 166, sy: 332, ex: 332, ey: 500, active: false, type: 2 },
-    { id: 9, sx: 332, sy: 332, ex: 500, ey: 500, active: false, type: 2 },
+    {
+      id: 1,
+      sx: 0,
+      sy: 0,
+      ex: 166,
+      ey: 166,
+      active: false,
+      type: 2,
+      pos: { x: 83, y: 83 },
+    },
+    {
+      id: 2,
+      sx: 166,
+      sy: 0,
+      ex: 332,
+      ey: 166,
+      active: false,
+      type: 2,
+      pos: { x: 250, y: 83 },
+    },
+    {
+      id: 3,
+      sx: 332,
+      sy: 0,
+      ex: 500,
+      ey: 166,
+      active: false,
+      type: 2,
+      pos: { x: 416, y: 83 },
+    },
+    {
+      id: 4,
+      sx: 0,
+      sy: 166,
+      ex: 166,
+      ey: 332,
+      active: false,
+      type: 2,
+      pos: { x: 83, y: 250 },
+    },
+    {
+      id: 5,
+      sx: 166,
+      sy: 166,
+      ex: 332,
+      ey: 332,
+      active: false,
+      type: 2,
+      pos: { x: 250, y: 250 },
+    },
+    {
+      id: 6,
+      sx: 332,
+      sy: 166,
+      ex: 500,
+      ey: 332,
+      active: false,
+      type: 2,
+      pos: { x: 416, y: 250 },
+    },
+    {
+      id: 7,
+      sx: 0,
+      sy: 332,
+      ex: 166,
+      ey: 500,
+      active: false,
+      type: 2,
+      pos: { x: 83, y: 416 },
+    },
+    {
+      id: 8,
+      sx: 166,
+      sy: 332,
+      ex: 332,
+      ey: 500,
+      active: false,
+      type: 2,
+      pos: { x: 250, y: 416 },
+    },
+    {
+      id: 9,
+      sx: 332,
+      sy: 332,
+      ex: 500,
+      ey: 500,
+      active: false,
+      type: 2,
+      pos: { x: 416, y: 416 },
+    },
   ];
   turn = false;
 
@@ -140,6 +221,45 @@ function createX(x, y) {
   } while (endX > startX + line + 1);
 }
 
+function createLineWin(xs, ys, xd, yd) {
+  let line = 1;
+  let directionX;
+  let directionY;
+
+  if (xs < xd) {
+    directionX = 1;
+  } else if (xs === xd) {
+    directionX = 0;
+  } else {
+    directionX = -1;
+  }
+
+  if (ys < yd) {
+    directionY = 1;
+  } else if (ys === yd) {
+    directionY = 0;
+  } else {
+    directionY = -1;
+  }
+
+  do {
+    const x = xs + line * directionX;
+    const y = ys + line * directionY;
+    const widthLine = Math.sin(line * 0.01) * 15;
+
+    setTimeout(() => {
+      brush.strokeStyle = "#000";
+      brush.beginPath();
+      brush.lineWidth = widthLine;
+      brush.moveTo(x, y);
+      brush.lineTo(x + 1, y + 1);
+      brush.stroke();
+    }, 500);
+
+    line++;
+  } while (line !== 331);
+}
+
 function createHeader(p1, p2) {
   const header = document.querySelector(".header");
   const playerStatus = `
@@ -172,7 +292,9 @@ function createModal(result, winner) {
       : (pl2.innerHTML = `<strong class="header_item-icon">⭕</strong><span>${playerO}</span><div class="header_item-point">${oPoints}</div>`);
   }
 
-  container.innerHTML += modal;
+  setTimeout(() => {
+    container.innerHTML += modal;
+  }, 2000);
 }
 
 function pointTurn() {
@@ -219,44 +341,7 @@ function boxActive(mousePos) {
       box.active = true;
       box.type = turn ? 1 : 0;
       invoke = true;
-      switch (box.id) {
-        case 1:
-          invokePos.x = 83;
-          invokePos.y = 83;
-          break;
-        case 2:
-          invokePos.x = 250;
-          invokePos.y = 83;
-          break;
-        case 3:
-          invokePos.x = 416;
-          invokePos.y = 83;
-          break;
-        case 4:
-          invokePos.x = 83;
-          invokePos.y = 250;
-          break;
-        case 5:
-          invokePos.x = 250;
-          invokePos.y = 250;
-          break;
-        case 6:
-          invokePos.x = 416;
-          invokePos.y = 250;
-          break;
-        case 7:
-          invokePos.x = 83;
-          invokePos.y = 416;
-          break;
-        case 8:
-          invokePos.y = 416;
-          invokePos.x = 250;
-          break;
-        case 9:
-          invokePos.y = 416;
-          invokePos.x = 416;
-          break;
-      }
+      invokePos = box.pos;
       break;
     }
   }
@@ -293,6 +378,12 @@ function win(turn) {
         boxPos[i].type === boxPos[i + 2].type
       ) {
         result = true;
+        createLineWin(
+          boxPos[i].pos.x,
+          boxPos[i].pos.y,
+          boxPos[i + 2].pos.x,
+          boxPos[i + 2].pos.y
+        );
       }
     }
   }
@@ -304,17 +395,29 @@ function win(turn) {
         boxPos[i].type === boxPos[i + 6].type
       ) {
         result = true;
+        createLineWin(
+          boxPos[i].pos.x,
+          boxPos[i].pos.y,
+          boxPos[i + 6].pos.x,
+          boxPos[i + 6].pos.y
+        );
       }
     }
   }
 
   for (let i = 0; i < 3; i += 2) {
-    if (boxPos[0 + i].active && boxPos[4].active && boxPos[8 - i].active) {
+    if (boxPos[i].active && boxPos[4].active && boxPos[8 - i].active) {
       if (
-        boxPos[0 + i].type === boxPos[4].type &&
-        boxPos[0 + i].type === boxPos[8 - i].type
+        boxPos[i].type === boxPos[4].type &&
+        boxPos[i].type === boxPos[8 - i].type
       ) {
         result = true;
+        createLineWin(
+          boxPos[i].pos.x,
+          boxPos[i].pos.y,
+          boxPos[8 - i].pos.x,
+          boxPos[8 - i].pos.y
+        );
       }
     }
   }
